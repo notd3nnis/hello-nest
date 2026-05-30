@@ -1,6 +1,13 @@
-import { PrimaryGeneratedColumn, Entity, Column } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  AfterInsert,
+  AfterUpdate,
+  AfterRemove,
+} from 'typeorm';
 
-Entity();
+@Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -10,4 +17,19 @@ export class User {
 
   @Column()
   password!: string;
+
+  @AfterInsert()
+  loginInsert() {
+    console.log('inserted user with id ', this.id);
+  }
+
+  @AfterUpdate()
+  afterUpdate() {
+    console.log('updated user with id ', this.id);
+  }
+
+  @AfterRemove()
+  afterRemove() {
+    console.log('removed user with id ', this.id);
+  }
 }
