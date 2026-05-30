@@ -8,10 +8,13 @@ import {
   Patch,
   Post,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from './create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './update-user.dto';
+import { serializeInterceptor } from '@/interceptors/serialize.interceptor';
+import { UserDto } from './user.dto';
 
 @Controller('auth')
 export class UsersController {
@@ -22,13 +25,15 @@ export class UsersController {
     this.userService.create(body.email, body.password);
   }
 
+  @UseInterceptors(new serializeInterceptor(UserDto))
   @Get('/:id')
-  findUser(@Param() id: string) {
-    const user = this.userService.findOne(parseInt(id));
+  async findUser(@Param() id: string) {
+    const user = await this.userService.findOne(parseInt(id));
 
     if (!user) {
       throw new NotFoundException('user not found');
     }
+    return user;
   }
 
   @Get()
